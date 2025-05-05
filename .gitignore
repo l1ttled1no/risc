@@ -3,3 +3,4 @@ project_2.runs
 project_2.sim
 *.log
 *.jou
+.Xil
