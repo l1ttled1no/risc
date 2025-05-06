@@ -1,102 +1,48 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 04/25/2025
-// Design Name: 
-// Module Name: ins_memory
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-//    Instruction Memory for RISC processor
-//    - 32 locations x 8-bit memory
-//    - Synchronous read operation
-//    - Stores both instructions and data
-// 
-// Dependencies: 
-//    parameters.vh for AWIDTH and DWIDTH definitions
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 `include "parameters.vh"
-
-module ins_memory(
-    input wire clk,                    // Clock input
-    input wire rd,
-    input wire wr, 
-    input wire data_en,
-    input wire rst,
-    input wire [`AWIDTH-1:0] addr,     // 5-bit address input
-    output reg [`DWIDTH-1:0] data_out  // 8-bit data output
+module instruction_memory (
+    input wire clk,                         // Clock input
+    input wire rst,                         // Reset input (active high assumed)
+    input wire [`AWIDTH-1:0] addr,          // Address input (from Program Counter)
+    input wire rd_en,                       // Read enable (often always true or tied to a fetch cycle signal)
+    output reg [`DWIDTH-1:0] instruction_out // Fetched instruction output
 );
 
-    // Memory array: 32 locations x 8-bit
-    reg [`DWIDTH-1:0] memory [0:(2**`AWIDTH)-1];
+    // Memory array for instructions
+    reg [`DWIDTH-1:0] i_memory [0:(2**`AWIDTH)-1];
 
-    // Initialize memory with a test program
-    initial begin
-        // This is for testing program, not for a real program
-        // // Example program:
-        // // You can modify these values based on your program needs
-        // memory[0]  = 8'b101_00000;  // LDA 0    ; Load value from address 0
-        // memory[1]  = 8'b011_00001;  // ADD 1    ; Add value from address 1
-        // memory[2]  = 8'b110_00010;  // STO 2    ; Store result to address 2
-        // memory[3]  = 8'b000_00000;  // HLT      ; Halt the processor
-        
-        // // Initialize data locations
-        // memory[16] = 8'h05;         // Example data
-        // memory[17] = 8'h03;         // Example data
-        
-        // // Initialize remaining memory to 0
-        // for (integer i = 4; i < 16; i = i + 1) begin
-        //     memory[i] = 8'h00;
-        // end
-        // for (integer i = 18; i < 32; i = i + 1) begin
-        //     memory[i] = 8'h00;
-        // end
-    end
+    // Initialize instruction memory with a program (for simulation / BRAM initialization)
+//    initial begin
+//        $display("Initializing Instruction Memory at time %0t...", $time);
+//        // Example program: Instructions are Opcode(bits 7-5) | Operand_Address(bits 4-0)
+//        // Ensure opcodes match your ALU and controller design.
+//        // Operand_Address here would refer to an address in the *data_memory*
+//        i_memory[0]  = {3'b101, 5'd0};  // LDA 0 (Load from data_memory[0])
+//        i_memory[1]  = {3'b010, 5'd1};  // ADD 1 (Add value from data_memory[1] to Accumulator)
+//        i_memory[2]  = {3'b110, 5'd2};  // STO 2 (Store Accumulator to data_memory[2])
+//        i_memory[3]  = {3'b001, 5'd0};  // SKZ 0 (No operand addr needed for SKZ, uses ALU inA)
+//        i_memory[4]  = {3'b111, 5'd7};  // JMP 7 (Jump to instruction_memory[7])
+//        i_memory[5]  = {3'b000, 5'd0};  // HLT
+//        i_memory[6]  = {3'b000, 5'd0};  // HLT (Placeholder)
+//        i_memory[7]  = {3'b000, 5'd0};  // HLT (Target for JMP)
+//        // ... initialize other instruction locations as needed or to HLT/NOP
+
+//        // Initialize remaining instruction memory to a default (e.g., HLT or NOP)
+//        for (integer i = 8; i < (2**`AWIDTH); i = i + 1) begin
+//            i_memory[i] = {3'b000, 5'b00000}; // Default to HLT
+//        end
+//        $display("Instruction Memory Initialization Complete.");
+//    end
 
     // Synchronous read operation
     always @(posedge clk) begin
         if (rst) begin
-            memory[0] = 8'b000_00000;
-            memory[1] = 8'b000_00000;
-            memory[2] = 8'b000_00000;
-            memory[3] = 8'b000_00000;
-            memory[4] = 8'b000_00000;
-            memory[5] = 8'b000_00000;
-            memory[6] = 8'b000_00000;
-            memory[7] = 8'b000_00000;
-            memory[8] = 8'b000_00000;
-            memory[9] = 8'b000_00000;
-            memory[10] = 8'b000_00000;
-            memory[11] = 8'b000_00000;
-            memory[12] = 8'b000_00000;
-            memory[13] = 8'b000_00000;
-            memory[14] = 8'b000_00000;
-            memory[15] = 8'b000_00000;
-            memory[16] = 8'b000_00000;
-            memory[17] = 8'b000_00000;
-            memory[18] = 8'b000_00000;
-            memory[19] = 8'b000_00000;
-            memory[20] = 8'b000_00000;
-            memory[21] = 8'b000_00000;
-            memory[22] = 8'b000_00000;
-            memory[23] = 8'b000_00000;
-            memory[24] = 8'b000_00000;
-            memory[25] = 8'b000_00000;
-            memory[26] = 8'b000_00000;
-            memory[27] = 8'b000_00000;
-            memory[28] = 8'b000_00000;
-            memory[29] = 8'b000_00000;
-            memory[30] = 8'b000_00000;
-            memory[31] = 8'b000_00000;
-            
-        end
-        if (rd_en) begin
-            data_out <= memory[addr];
+            instruction_out <= {`DWIDTH{1'b0}}; // Reset output
+        end else begin
+            if (rd_en) begin // Read enable for instruction fetch
+                instruction_out <= i_memory[addr];
+                $display("INST_MEM READ @%0t: addr=%h, inst_out_next_cycle_will_be=%h", $time, addr, i_memory[addr]);
+            end
+            // If not rd_en, instruction_out holds its value
         end
     end
 
