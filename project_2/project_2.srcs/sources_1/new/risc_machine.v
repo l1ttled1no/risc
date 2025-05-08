@@ -14,8 +14,10 @@ module riscv_simple_processor (
     output wire cu_wr_o,       // General write signal from CU (for Data Memory)
     output wire [`AWIDTH-1:0] current_pc_o,
     output wire [`DWIDTH-1:0] acc_val_o,
+    output wire [`DWIDTH-1:0] alu_result_o,
     output wire [2:0] cu_current_state_o,
     output wire [`DWIDTH-1:0] current_instruction_o
+    
 );
 
     // --- Internal Wires ---
@@ -198,6 +200,7 @@ module riscv_simple_processor (
     assign cu_ld_pc_o = cu_ld_pc_w;
     assign cu_wr_o = cu_wr_w;
     assign current_pc_o = pc_out_w;
+    assign alu_result_o = alu_result_w;
     assign acc_val_o = acc_out_w;
     assign cu_current_state_o = cu_current_state_w;
     assign current_instruction_o = ir_out_w; // Or imem_instr_out_w for fetched, not-yet-latched instruction

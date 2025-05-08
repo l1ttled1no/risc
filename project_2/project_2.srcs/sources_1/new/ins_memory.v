@@ -31,7 +31,7 @@ module instruction_memory (
             i_memory[i] = {3'b101, i[4:0]};
         end
         
-        i_memory[5] = {3'b000, 5'd0};
+        i_memory[3] = {3'b001, 5'd0};
 
         // $display("Instruction Memory Initialization Complete.");
     end
