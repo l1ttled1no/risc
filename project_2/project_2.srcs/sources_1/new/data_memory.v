@@ -18,13 +18,13 @@ module data_memory (
     initial begin
         // $display("Initializing Data Memory (bidirectional) at time %0t...", $time);
         // Example initial data values
-        d_memory[0] = 8'd5;
-        d_memory[1] = 8'd10;
-        d_memory[2] = 8'h00; // Will be overwritten by STO in example program
+//        d_memory[0] = 8'd5;
+//        d_memory[1] = 8'd0;
+//        d_memory[2] = 8'h00; // Will be overwritten by STO in example program
         
         // Initialize remaining data memory to 0 (optional)
-        for (i = 3; i < (2**`AWIDTH); i = i + 1) begin
-            d_memory[i] = {`DWIDTH{1'b0}};
+        for (i = 0; i < (2**`AWIDTH); i = i + 1) begin
+            d_memory[i] = i;
         end
 //        $display("Data Memory (bidirectional) Initialization Complete.");
     end

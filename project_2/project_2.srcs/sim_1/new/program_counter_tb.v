@@ -26,9 +26,9 @@ module program_counter_tb();
     // Clock generation (50MHz - 20ns period)
     always begin
         clk = 1'b0;
-        #10;  // 10ns delay
+        #5;  // 10ns delay
         clk = 1'b1;
-        #10;  // 10ns delay
+        #5;  // 10ns delay
     end
     
     // Test stimulus
