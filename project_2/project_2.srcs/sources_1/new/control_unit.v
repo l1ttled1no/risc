@@ -1,4 +1,3 @@
-// Code your design here
 module control_unit(
     input wire clk, // clock signal 
     input wire rst, // reset signal 
@@ -14,7 +13,8 @@ module control_unit(
     output reg ld_ac, // load accumulator regs 
     output reg ld_pc, // load program_counter
     output reg wr, // Write
-    output reg data_e
+    output reg data_e,
+    output reg [2:0] current_state
 ); 
     // State of the control unit 
     parameter INST_ADDR =   3'b000;
@@ -26,7 +26,8 @@ module control_unit(
     parameter ALU_OP =      3'b110; 
     parameter STORE =       3'b111; 
 
-    reg [2:0] current_state, next_state; 
+    // reg [2:0] current_state, next_state; 
+    reg [2:0] next_state; 
 
     // opcode
     parameter OP_HLT = 3'b000; 
@@ -42,10 +43,10 @@ module control_unit(
         // initialize the signal first
         
         if (rst) begin //begin: rst == 0 
-            current_state <= INST_ADDR; // reset: current_state is set to INST_ADDR 
+            current_state = STORE; // reset: current_state is set to INST_ADDR 
         end // end: rst == 0 
         else begin // begin: else 
-            current_state <= next_state;  // current state <= next state
+            current_state = next_state;  // current state <= next state
         end // emd: else
     end //end: always @(posedge clk)
 
@@ -67,7 +68,7 @@ module control_unit(
     // reg halt_latch; // flag for halt signal until it reset
 
 
-    always @(current_state or opcode or is_zero) begin //always @(*)
+    always @(posedge clk) begin //always @(*)
         // Set initial state 
 
         sel =    1'b0; 
