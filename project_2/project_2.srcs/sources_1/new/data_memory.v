@@ -13,21 +13,21 @@ module data_memory (
     reg [`DWIDTH-1:0] d_memory [0:(2**`AWIDTH)-1];
     // Internal register to hold data read from memory before driving the bus
     reg [`DWIDTH-1:0] read_data_reg;
-
+    integer i ;
     // Initialize data memory (optional, for simulation / BRAM initialization)
-//    initial begin
-//        $display("Initializing Data Memory (bidirectional) at time %0t...", $time);
-//        // Example initial data values
-//        d_memory[0] = 8'd5;
-//        d_memory[1] = 8'd10;
-//        d_memory[2] = 8'h00; // Will be overwritten by STO in example program
-
-//        // Initialize remaining data memory to 0 (optional)
-//        for (integer i = 3; i < (2**`AWIDTH); i = i + 1) begin
-//            d_memory[i] = {`DWIDTH{1'b0}};
-//        end
-////        $display("Data Memory (bidirectional) Initialization Complete.");
-//    end
+    initial begin
+        // $display("Initializing Data Memory (bidirectional) at time %0t...", $time);
+        // Example initial data values
+        d_memory[0] = 8'd5;
+        d_memory[1] = 8'd10;
+        d_memory[2] = 8'h00; // Will be overwritten by STO in example program
+        
+        // Initialize remaining data memory to 0 (optional)
+        for (i = 3; i < (2**`AWIDTH); i = i + 1) begin
+            d_memory[i] = {`DWIDTH{1'b0}};
+        end
+//        $display("Data Memory (bidirectional) Initialization Complete.");
+    end
 
     // Synchronous write operation
     // Captures data from data_io bus into memory when wr_en is active
