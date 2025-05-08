@@ -41,7 +41,7 @@ module control_unit(
     always @(posedge clk) begin 
         // initialize the signal first
         
-        if (rst == 0) begin //begin: rst == 0 
+        if (rst) begin //begin: rst == 0 
             current_state <= INST_ADDR; // reset: current_state is set to INST_ADDR 
         end // end: rst == 0 
         else begin // begin: else 
@@ -50,7 +50,7 @@ module control_unit(
     end //end: always @(posedge clk)
 
     // This always block will handling next state status 
-    always @(*) begin //always @(*)
+    always @(current_state) begin //always @(*)
         case (current_state)
             INST_ADDR:  next_state = INST_FETCH; 
             INST_FETCH: next_state = INST_LOAD; 
@@ -67,7 +67,7 @@ module control_unit(
     // reg halt_latch; // flag for halt signal until it reset
 
 
-    always @(*) begin //always @(*)
+    always @(current_state or opcode or is_zero) begin //always @(*)
         // Set initial state 
 
         sel =    1'b0; 
