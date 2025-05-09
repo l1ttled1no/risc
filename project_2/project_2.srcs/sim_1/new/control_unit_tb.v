@@ -67,14 +67,14 @@ module controlunit_tb;
         // Initialize inputs
         clk = 0;
         rst = 1;
-        opcode = 3'b000;
+        opcode = 3'b001;
         is_zero = 0;
 
         #10; // Wait for reset
         rst = 0;
 
         // Loop through all opcode values
-        repeat (8) begin
+        repeat (32) begin
             opcode = opcode + 1;
             is_zero = ~is_zero; // Toggle zero flag to test both states
             #80; // Wait to observe outputs

@@ -56,7 +56,7 @@ module control_unit(
         if (rst) begin //begin: rst == 0 
             halt_latch <= 1'b0; // reset: current_state is set to INST_ADDR 
         end // end: rst == 0 
-        else if (opcode == HLT && current_state == OP_ADDR) begin
+        else if (opcode == OP_HLT && current_state == OP_ADDR) begin
             halt_latch <= 1'b1;  // halt detect
         end // end: else
     end //end: always @(posedge clk)
