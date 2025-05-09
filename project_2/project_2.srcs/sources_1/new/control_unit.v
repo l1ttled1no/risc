@@ -42,7 +42,6 @@ module control_unit(
     
     always @(posedge clk) begin 
         // initialize the signal first
-        
         if (rst) begin //begin: rst == 0 
             current_state <= INST_ADDR; // reset: current_state is set to INST_ADDR 
         end // end: rst == 0 
@@ -51,23 +50,38 @@ module control_unit(
         end // emd: else
     end //end: always @(posedge clk)
 
-    // This always block will handling next state status 
-    always @(current_state) begin //always @(*)
-        case (current_state)
-            INST_ADDR:  next_state = INST_FETCH; 
-            INST_FETCH: next_state = INST_LOAD; 
-            INST_LOAD:  next_state = IDLE; 
-            IDLE:       next_state = OP_ADDR; 
-            OP_ADDR:    next_state = OP_FETCH; 
-            OP_FETCH:   next_state = ALU_OP; 
-            ALU_OP:     next_state = STORE; 
-            STORE:      next_state = INST_ADDR; 
+    reg halt_latch; // flag for halt signal until it reset
 
-        endcase // endcase: current state
+    always @(posedge clk) begin 
+        if (rst) begin //begin: rst == 0 
+            halt_latch <= 1'b0; // reset: current_state is set to INST_ADDR 
+        end // end: rst == 0 
+        else if (opcode == HLT && current_state == OP_ADDR) begin
+            halt_latch <= 1'b1;  // halt detect
+        end // end: else
+    end //end: always @(posedge clk)
+
+
+    // This always block will handling next state status 
+    always @(current_state or halt_latch) begin //always @(*)
+        if (halt_latch) begin // begin: if
+            // always inside INST_ADDR loop. 
+            next_state = INST_ADDR; 
+        end // end: if
+        else begin // begin: else
+            case (current_state)
+                INST_ADDR:  next_state = INST_FETCH; 
+                INST_FETCH: next_state = INST_LOAD; 
+                INST_LOAD:  next_state = IDLE; 
+                IDLE:       next_state = OP_ADDR; 
+                OP_ADDR:    next_state = OP_FETCH; 
+                OP_FETCH:   next_state = ALU_OP; 
+                ALU_OP:     next_state = STORE; 
+                STORE:      next_state = INST_ADDR; 
+            endcase // endcase: current state
+        end //end: else
     end // end: always @(*)
     
-    // reg halt_latch; // flag for halt signal until it reset
-
 
     always @(current_state or opcode or is_zero) begin //always @(*)
         // Set initial state 
@@ -128,6 +142,9 @@ module control_unit(
                 wr =     (opcode == OP_STO) ? 1'b1 : 1'b0; 
                 data_e = (opcode == OP_STO) ? 1'b1 : 1'b0; 
             end // end: STORE
+            default: begin
+                // do nothing. 
+            end
         endcase // endcase: current_state
     end // end: always @(*)
     
