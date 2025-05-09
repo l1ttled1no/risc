@@ -5,11 +5,11 @@
 
 //Define op_code 
 
-`define HLT 000
-`define SKZ 001
-`define ADD 010
-`define AND 011
-`define XOR 100
-`define LDA 101
-`define STO 110
-`define JMP 111
+`define HLT 3'b000
+`define SKZ 3'b001
+`define ADD 3'b010
+`define AND 3'b011
+`define XOR 3'b100
+`define LDA 3'b101
+`define STO 3'b110
+`define JMP 3'b111 

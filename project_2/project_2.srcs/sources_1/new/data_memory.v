@@ -14,6 +14,9 @@ module data_memory (
     // Internal register to hold data read from memory before driving the bus
     reg [`DWIDTH-1:0] read_data_reg;
     integer i ;
+    localparam DATA_1_ADDR = 5'h1A;
+    localparam DATA_2_ADDR = 5'h1B;
+    localparam TEMP_ADDR   = 5'h1C;
     // Initialize data memory (optional, for simulation / BRAM initialization)
     initial begin
         // $display("Initializing Data Memory (bidirectional) at time %0t...", $time);
@@ -24,8 +27,13 @@ module data_memory (
         
         // Initialize remaining data memory to 0 (optional)
         for (i = 0; i < (2**`AWIDTH); i = i + 1) begin
-            d_memory[i] = i;
+            d_memory[i] = 0;
         end
+        
+                // Initialize specific data memory locations
+        d_memory[DATA_1_ADDR] = 8'h00; // DATA_1: 0x00
+        d_memory[DATA_2_ADDR] = 8'hFF; // DATA_2: 0xFF
+        d_memory[TEMP_ADDR]   = 8'hAA; // TEMP: 0xAA (Initial value, will be overwritten)
 //        $display("Data Memory (bidirectional) Initialization Complete.");
     end
 

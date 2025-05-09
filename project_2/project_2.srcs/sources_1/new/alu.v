@@ -14,7 +14,7 @@ module alu (
         // Default assignment to prevent latches if any path isn't covered,
         // though with a full case for a 3-bit opcode, it's less critical for latches
         // but good for defining behavior for unknown opcodes during simulation.
-        result = 8'hXX; // Default to 'X' for undefined opcodes (or 8'h00)
+        result = 8'h00; // Default to 'X' for undefined opcodes (or 8'h00)
         case (opcode)
             3'b000: begin // HALT Program (ALU might just pass through a value)
                 result = inA;
@@ -51,7 +51,7 @@ module alu (
             end
 
             default: begin
-                result = 8'hXX; // Or 8'b00000000; // Handle undefined opcodes
+                result = 8'h00; // Or 8'b00000000; // Handle undefined opcodes
             end
         endcase
     end
